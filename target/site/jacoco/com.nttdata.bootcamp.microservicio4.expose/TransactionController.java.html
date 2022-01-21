@@ -1,6 +1,9 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TransactionController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">microservicio4</a> &gt; <a href="index.source.html" class="el_package">com.nttdata.bootcamp.microservicio4.expose</a> &gt; <span class="el_source">TransactionController.java</span></div><h1>TransactionController.java</h1><pre class="source lang-java linenums">package com.nttdata.bootcamp.microservicio4.expose;
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TransactionController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">microservicio4</a> &gt; <a href="index.source.html" class="el_package">com.nttdata.bootcamp.microservicio4.expose</a> &gt; <span class="el_source">TransactionController.java</span></div><h1>TransactionController.java</h1><pre class="source lang-java linenums">package com.nttdata.bootcamp.microservicio4.expose;
 
 import com.nttdata.bootcamp.microservicio4.model.Transaction;
+
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+
 import com.nttdata.bootcamp.microservicio4.model.Customer;
 import com.nttdata.bootcamp.microservicio4.model.Credit;
 import com.nttdata.bootcamp.microservicio4.model.Account;
@@ -40,72 +43,84 @@ import reactor.core.publisher.Mono;
  */
 
 @RestController
-<span class="fc" id="L43">@Slf4j</span>
-<span class="fc" id="L44">public class TransactionController {</span>
+<span class="fc" id="L46">@Slf4j</span>
+<span class="fc" id="L47">public class TransactionController {</span>
 
   @Autowired
   private TransactionService transactionService;
+  private static final String TRANSACTIONS_DELETE =  &quot;DeleteTransactions&quot;;
+  private static final String TRANSACTIONS_UPDATE =  &quot;UpdateTransactions&quot;;
   
   @GetMapping(&quot;/api/customers&quot;)
   public Flux&lt;Customer&gt; getCustomer() {
-<span class="nc" id="L51">    log.info(&quot;byCustomerAll&gt;&gt;&gt;&gt;&gt;&quot;);</span>
-<span class="nc" id="L52">    return transactionService.findCustomerAll();</span>
+<span class="nc" id="L56">    log.info(&quot;byCustomerAll&gt;&gt;&gt;&gt;&gt;&quot;);</span>
+<span class="nc" id="L57">    return transactionService.findCustomerAll();</span>
   }
   
   @GetMapping(&quot;/api/credits&quot;)
   public Flux&lt;Credit&gt; getCredit() {
-<span class="nc" id="L57">    log.info(&quot;byCreditAll&gt;&gt;&gt;&gt;&gt;&quot;);</span>
-<span class="nc" id="L58">    return transactionService.findCreditAll();</span>
+<span class="nc" id="L62">    log.info(&quot;byCreditAll&gt;&gt;&gt;&gt;&gt;&quot;);</span>
+<span class="nc" id="L63">    return transactionService.findCreditAll();</span>
   }
   
   @GetMapping(&quot;/api/accounts&quot;)
   public Flux&lt;Account&gt; getAccount() {
-<span class="nc" id="L63">    log.info(&quot;byAccountAll&gt;&gt;&gt;&gt;&gt;&quot;);</span>
-<span class="nc" id="L64">    return transactionService.findAccountAll();</span>
+<span class="nc" id="L68">    log.info(&quot;byAccountAll&gt;&gt;&gt;&gt;&gt;&quot;);</span>
+<span class="nc" id="L69">    return transactionService.findAccountAll();</span>
   }
 
   @GetMapping(&quot;/api/transactions/{id}&quot;)
   public Mono&lt;Transaction&gt; byId(@PathVariable(&quot;id&quot;) String id) {
-<span class="nc" id="L69">    log.info(&quot;byId&gt;&gt;&gt;&gt;&gt;&quot;);</span>
-<span class="nc" id="L70">    return transactionService.findById(id);</span>
+<span class="nc" id="L74">    log.info(&quot;byId&gt;&gt;&gt;&gt;&gt;&quot;);</span>
+<span class="nc" id="L75">    return transactionService.findById(id);</span>
   }
   
   @GetMapping(&quot;/api/transactions-all&quot;)
   public Flux&lt;Transaction&gt; findAll() {
-<span class="nc" id="L75">    log.info(&quot;findAll&gt;&gt;&gt;&gt;&gt;&quot;);</span>
+<span class="nc" id="L80">    log.info(&quot;findAll&gt;&gt;&gt;&gt;&gt;&quot;);</span>
 
-<span class="nc" id="L77">    return transactionService.findAll();</span>
+<span class="nc" id="L82">    return transactionService.findAll();</span>
   }
 
   @PostMapping(&quot;/api/transaction/create&quot;)
   @ResponseStatus(HttpStatus.CREATED)
   public Mono&lt;Transaction&gt; create(@RequestBody Transaction transaction) {
-<span class="nc" id="L83">    log.info(&quot;create&gt;&gt;&gt;&gt;&gt;&quot;);</span>
-<span class="nc" id="L84">    return transactionService.create(transaction);</span>
+<span class="nc" id="L88">    log.info(&quot;create&gt;&gt;&gt;&gt;&gt;&quot;);</span>
+<span class="nc" id="L89">    return transactionService.create(transaction);</span>
   }
-
+  
+  @CircuitBreaker(name=TRANSACTIONS_UPDATE, fallbackMethod=&quot;fallbackUpdateTransaction&quot;)
   @PutMapping(&quot;/api/transaction/update&quot;)
   public Mono&lt;ResponseEntity&lt;Transaction&gt;&gt; update(@RequestBody Transaction transaction) {
-<span class="nc" id="L89">    log.info(&quot;update&gt;&gt;&gt;&gt;&gt;&quot;);</span>
-<span class="nc" id="L90">    return transactionService.update(transaction)</span>
-<span class="nc" id="L91">        .flatMap(transactionUpdate -&gt; Mono.just(ResponseEntity.ok(transactionUpdate)))</span>
-<span class="nc" id="L92">        .switchIfEmpty(Mono.just(ResponseEntity.notFound().build()));</span>
+<span class="nc" id="L95">    log.info(&quot;update&gt;&gt;&gt;&gt;&gt;&quot;);</span>
+<span class="nc" id="L96">    return transactionService.update(transaction)</span>
+<span class="nc" id="L97">        .flatMap(transactionUpdate -&gt; Mono.just(ResponseEntity.ok(transactionUpdate)))</span>
+<span class="nc" id="L98">        .switchIfEmpty(Mono.just(ResponseEntity.notFound().build()));</span>
   }
 
   @PatchMapping(&quot;/api/transactions&quot;)
   public Mono&lt;ResponseEntity&lt;Transaction&gt;&gt; change(@RequestBody Transaction transaction) {
-<span class="nc" id="L97">    log.info(&quot;change&gt;&gt;&gt;&gt;&gt;&quot;);</span>
-<span class="nc" id="L98">    return transactionService.change(transaction)</span>
-<span class="nc" id="L99">        .flatMap(transactionUpdate -&gt; Mono.just(ResponseEntity.ok(transactionUpdate)))</span>
-<span class="nc" id="L100">        .switchIfEmpty(Mono.just(ResponseEntity.notFound().build()));</span>
+<span class="nc" id="L103">    log.info(&quot;change&gt;&gt;&gt;&gt;&gt;&quot;);</span>
+<span class="nc" id="L104">    return transactionService.change(transaction)</span>
+<span class="nc" id="L105">        .flatMap(transactionUpdate -&gt; Mono.just(ResponseEntity.ok(transactionUpdate)))</span>
+<span class="nc" id="L106">        .switchIfEmpty(Mono.just(ResponseEntity.notFound().build()));</span>
   }
 
+  @CircuitBreaker(name=TRANSACTIONS_DELETE, fallbackMethod=&quot;fallbackDeleteTransactions&quot;)
   @DeleteMapping(&quot;/api/transactions/{id}&quot;)
   public Mono&lt;ResponseEntity&lt;Transaction&gt;&gt; delete(@PathVariable(&quot;id&quot;) String id) {
-<span class="nc" id="L105">    log.info(&quot;delete&gt;&gt;&gt;&gt;&gt;&quot;);</span>
-<span class="nc" id="L106">    return transactionService.remove(id)</span>
-<span class="nc" id="L107">        .flatMap(transaction -&gt; Mono.just(ResponseEntity.ok(transaction)))</span>
-<span class="nc" id="L108">        .switchIfEmpty(Mono.just(ResponseEntity.notFound().build()));</span>
+<span class="nc" id="L112">    log.info(&quot;delete&gt;&gt;&gt;&gt;&gt;&quot;);</span>
+<span class="nc" id="L113">    return transactionService.remove(id)</span>
+<span class="nc" id="L114">        .flatMap(transaction -&gt; Mono.just(ResponseEntity.ok(transaction)))</span>
+<span class="nc" id="L115">        .switchIfEmpty(Mono.just(ResponseEntity.notFound().build()));</span>
+  }
+  
+  public Mono&lt;ResponseEntity&lt;String&gt;&gt; fallbackUpdateTransaction(@RequestBody Transaction transaction,RuntimeException ex) {
+<span class="nc" id="L119">	  return Mono.just(ResponseEntity.ok().body(&quot;Actualizando transactions: &quot;+ transaction.getId()+ &quot;Servicio no disponible.&quot;));</span>
+  }
+  
+  public Mono&lt;ResponseEntity&lt;String&gt;&gt; fallbackDeleteTransactions(@PathVariable(&quot;id&quot;) String id, RuntimeException ex) {
+<span class="nc" id="L123">	    return Mono.just(ResponseEntity.ok().body(&quot;Se buscó el id: &quot; + id + &quot; Servicio no disponible.&quot;));</span>
   }
   
 }
