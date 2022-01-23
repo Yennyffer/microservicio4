@@ -35,6 +35,7 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           
+          
   deploy-to-cluster:
     name: deploy to cluster
     needs: build-and-push
