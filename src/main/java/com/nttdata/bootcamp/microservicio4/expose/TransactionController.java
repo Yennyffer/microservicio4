@@ -51,38 +51,38 @@ public class TransactionController {
   private static final String TRANSACTIONS_DELETE =  "DeleteTransactions";
   private static final String TRANSACTIONS_UPDATE =  "UpdateTransactions";
   
-  @GetMapping("/api/customers")
+  @GetMapping("/api/v1/customers")
   public Flux<Customer> getCustomer() {
     log.info("byCustomerAll>>>>>");
     return transactionService.findCustomerAll();
   }
   
-  @GetMapping("/api/credits")
+  @GetMapping("/api/v1/credits")
   public Flux<Credit> getCredit() {
     log.info("byCreditAll>>>>>");
     return transactionService.findCreditAll();
   }
   
-  @GetMapping("/api/accounts")
+  @GetMapping("/api/v1/accounts")
   public Flux<Account> getAccount() {
     log.info("byAccountAll>>>>>");
     return transactionService.findAccountAll();
   }
 
-  @GetMapping("/api/transactions/{id}")
+  @GetMapping("/api/v1/transactions/{id}")
   public Mono<Transaction> byId(@PathVariable("id") String id) {
     log.info("byId>>>>>");
     return transactionService.findById(id);
   }
   
-  @GetMapping("/api/transactions-all")
+  @GetMapping("/api/v1/transactions/all")
   public Flux<Transaction> findAll() {
     log.info("findAll>>>>>");
 
     return transactionService.findAll();
   }
 
-  @PostMapping("/api/transaction/create")
+  @PostMapping("/api/v1/transactions/")
   @ResponseStatus(HttpStatus.CREATED)
   public Mono<Transaction> create(@RequestBody Transaction transaction) {
     log.info("create>>>>>");
@@ -90,7 +90,7 @@ public class TransactionController {
   }
   
   @CircuitBreaker(name=TRANSACTIONS_UPDATE, fallbackMethod="fallbackUpdateTransaction")
-  @PutMapping("/api/transaction/update")
+  @PutMapping("/api/v1/transactions/")
   public Mono<ResponseEntity<Transaction>> update(@RequestBody Transaction transaction) {
     log.info("update>>>>>");
     return transactionService.update(transaction)
@@ -98,7 +98,7 @@ public class TransactionController {
         .switchIfEmpty(Mono.just(ResponseEntity.notFound().build()));
   }
 
-  @PatchMapping("/api/transactions")
+  @PatchMapping("/api/v1/transactions")
   public Mono<ResponseEntity<Transaction>> change(@RequestBody Transaction transaction) {
     log.info("change>>>>>");
     return transactionService.change(transaction)
@@ -107,7 +107,7 @@ public class TransactionController {
   }
 
   @CircuitBreaker(name=TRANSACTIONS_DELETE, fallbackMethod="fallbackDeleteTransactions")
-  @DeleteMapping("/api/transactions/{id}")
+  @DeleteMapping("/api/v1/transactions/{id}")
   public Mono<ResponseEntity<Transaction>> delete(@PathVariable("id") String id) {
     log.info("delete>>>>>");
     return transactionService.remove(id)

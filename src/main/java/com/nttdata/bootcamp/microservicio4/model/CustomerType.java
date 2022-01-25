@@ -30,6 +30,6 @@ import lombok.Setter;
 @NoArgsConstructor
 
 public class CustomerType {
-    private String id;
+    private String codigo;
     private String description;
 }

@@ -28,7 +28,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TransactionType {
-	private String id;
+	private String codigo;
 	private String description;
 	
 }

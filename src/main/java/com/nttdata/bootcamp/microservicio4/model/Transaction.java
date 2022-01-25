@@ -1,5 +1,6 @@
 package com.nttdata.bootcamp.microservicio4.model;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
@@ -40,11 +41,11 @@ public class Transaction {
     @Id
     private String id = UUID.randomUUID().toString();
     private double amount;
-    private Date date;
+    private LocalDate date;
     private TransactionType transactionType;
     private Credit credit;
     private Account account;
-    private boolean isActive;
+    private String status;
     
     
 }
