@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.nttdata.bootcamp.microservicio4.business.impl.TransactionServiceImplTest
+-------------------------------------------------------------------------------
+Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 58.261 s - in com.nttdata.bootcamp.microservicio4.business.impl.TransactionServiceImplTest
